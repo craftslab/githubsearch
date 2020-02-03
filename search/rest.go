@@ -12,6 +12,8 @@
 
 package search
 
+import "github.com/craftslab/githubsearch/runtime"
+
 const (
 	urlApi  = "https://api.github.com"
 	urlCode = urlApi + "/search/code"
@@ -43,5 +45,10 @@ func (r Rest) Run(qualifier, srch interface{}) (interface{}, error) {
 
 func (r Rest) runRest(qualifier, srch interface{}) (interface{}, error) {
 	// TODO
-	return nil, nil
+	req := []runtime.Request{{Url: "", Val: nil}}
+	return runtime.Run(operation, req)
+}
+
+func operation(req *runtime.Request) interface{} {
+	return nil
 }

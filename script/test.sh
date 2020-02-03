@@ -1,6 +1,6 @@
 #!/bin/bash
 
-list="cmd,search"
+list="cmd,runtime,search"
 
 go env -w GOPROXY=https://goproxy.cn,direct
 
