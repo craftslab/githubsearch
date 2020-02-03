@@ -24,12 +24,16 @@ import (
 )
 
 var (
-	app    = kingpin.New("githubsearch", "GitHub Search").Author(Author).Version(Version)
-	api    = app.Flag("api", "API type, type: "+strings.Join(search.Apis, " ")).Short('a').Required().String()
-	config = app.Flag("config", "Config file, format: .json").Short('c').Required().String()
-	output = app.Flag("output", "Output file, format: .json").Short('o').Required().String()
-	query  = app.Flag("query", "Query type, format: "+strings.Join(search.Types, search.SyntaxSep+"{QUERY}"+
-		search.TypeSep)+search.SyntaxSep+"{QUERY}").Short('q').Required().String()
+	app       = kingpin.New("githubsearch", "GitHub Search").Author(Author).Version(Version)
+	api       = app.Flag("api", "API type, type: "+strings.Join(search.Apis, " ")).Short('a').Required().String()
+	config    = app.Flag("config", "Config file, format: .json").Short('c').Required().String()
+	output    = app.Flag("output", "Output file, format: .json").Short('o').Required().String()
+	qualifier = app.Flag("qualifier", "Qualifier list, format: "+
+		"{qualifier}"+search.SyntaxSep+"{query}"+search.QualifierSep+
+		"{qualifier}"+search.SyntaxSep+"{query}"+search.QualifierSep+"...").Short('q').Required().String()
+	srch = app.Flag("search", "Search list, format: "+
+		strings.Join(search.Types, search.SyntaxSep+"{text}"+search.SearchSep)+
+		search.SyntaxSep+"{text}").Short('s').Required().String()
 )
 
 // Run is search implementation for the CLI
@@ -50,12 +54,17 @@ func Run() {
 		log.Fatal("output invalid: ", err.Error())
 	}
 
-	query, err := parseQuery(*query)
+	qualifier, err := parseQualifier(*qualifier)
 	if err != nil {
-		log.Fatal("query invalid: ", err.Error())
+		log.Fatal("qualifier invalid: ", err.Error())
 	}
 
-	result, err := runSearch(api, config, query)
+	srch, err := parseSearch(*srch)
+	if err != nil {
+		log.Fatal("search invalid: ", err.Error())
+	}
+
+	result, err := runSearch(api, config, qualifier, srch)
 	if err != nil {
 		log.Fatal("search failed: ", err.Error())
 	}
@@ -111,7 +120,7 @@ func parseOutput(name string) error {
 	return nil
 }
 
-func removeDuplicates(data interface{}) interface{} {
+func removeDuplicate(data interface{}) interface{} {
 	var buf []interface{}
 	key := map[string]bool{}
 
@@ -125,8 +134,45 @@ func removeDuplicates(data interface{}) interface{} {
 	return buf
 }
 
-func parseQuery(data string) (interface{}, error) {
-	_parseQuery := func(data string) (string, string, bool) {
+func parseQualifier(data string) (interface{}, error) {
+	helper := func(data string) (string, string, bool) {
+		if !strings.Contains(data, search.SyntaxSep) {
+			return "", "", false
+		}
+		buf := strings.Split(data, search.SyntaxSep)
+		key := strings.TrimSpace(buf[0])
+		val := strings.TrimSpace(buf[1])
+		if key == "" || val == "" {
+			return "", "", false
+		}
+		return key, val, true
+	}
+
+	qualifier := map[string][]interface{}{}
+
+	buf := strings.Split(data, search.QualifierSep)
+	for _, item := range buf {
+		if item != "" {
+			key, val, found := helper(item)
+			if found {
+				qualifier[key] = append(qualifier[key], val)
+			}
+		}
+	}
+
+	if len(qualifier) == 0 {
+		return qualifier, errors.New("qualifier null")
+	}
+
+	for key := range qualifier {
+		qualifier[key] = removeDuplicate(qualifier[key]).([]interface{})
+	}
+
+	return qualifier, nil
+}
+
+func parseSearch(data string) (interface{}, error) {
+	helper := func(data string) (string, string, bool) {
 		if !strings.Contains(data, search.SyntaxSep) {
 			return "", "", false
 		}
@@ -146,36 +192,35 @@ func parseQuery(data string) (interface{}, error) {
 		return key, val, found
 	}
 
-	query := map[string][]interface{}{}
+	srch := map[string][]interface{}{}
 
-	buf := strings.Split(data, search.TypeSep)
+	buf := strings.Split(data, search.SearchSep)
 	for _, item := range buf {
 		if item != "" {
-			key, val, found := _parseQuery(item)
+			key, val, found := helper(item)
 			if found {
-				query[key] = append(query[key], val)
+				srch[key] = append(srch[key], val)
 			}
 		}
 	}
 
-	if len(query) == 0 {
-		return query, errors.New("query null")
+	if len(srch) == 0 {
+		return srch, errors.New("search null")
 	}
 
-	for key := range query {
-		query[key] = removeDuplicates(query[key]).([]interface{})
+	for key := range srch {
+		srch[key] = removeDuplicate(srch[key]).([]interface{})
 	}
 
-	return query, nil
+	return srch, nil
 }
-
-func runSearch(api string, config, query interface{}) (interface{}, error) {
+func runSearch(api string, config, qualifier, srch interface{}) (interface{}, error) {
 	cfg, present := config.(map[string]interface{})[api]
 	if !present {
 		return nil, errors.New("api invalid")
 	}
 
-	return search.Run(api, cfg, query)
+	return search.Run(api, cfg, qualifier, srch)
 }
 
 func writeFile(name string, data interface{}) error {

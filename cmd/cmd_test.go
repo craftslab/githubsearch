@@ -59,7 +59,7 @@ func TestParseOutput(t *testing.T) {
 	}
 }
 
-func checkDuplicates(data []interface{}) bool {
+func checkDuplicate(data []interface{}) bool {
 	found := false
 	key := map[string]bool{}
 
@@ -73,84 +73,123 @@ func checkDuplicates(data []interface{}) bool {
 	return found
 }
 
-func TestRemoveDuplicates(t *testing.T) {
+func TestRemoveDuplicate(t *testing.T) {
 	buf := []interface{}{"code:runSearch", "code:runSearch"}
-	buf = removeDuplicates(buf).([]interface{})
+	buf = removeDuplicate(buf).([]interface{})
 
-	if found := checkDuplicates(buf); found {
+	if found := checkDuplicate(buf); found {
 		t.Error("FAIL")
 	}
 }
 
-func TestParseQuery(t *testing.T) {
-	if _, err := parseQuery(""); err == nil {
+func TestParseQualifier(t *testing.T) {
+	if _, err := parseQualifier(""); err == nil {
 		t.Error("FAIL")
 	}
 
-	if _, err := parseQuery("code"); err == nil {
+	if _, err := parseQualifier("in"); err == nil {
 		t.Error("FAIL")
 	}
 
-	if _, err := parseQuery("code:"); err == nil {
+	if _, err := parseQualifier("in:"); err == nil {
 		t.Error("FAIL")
 	}
 
-	if _, err := parseQuery("code:runSearch,owner:craftslab,repo:githubsearch"); err != nil {
-		t.Error("FAIL:", err)
-	}
-
-	query, err := parseQuery("code:runSearch,code:runSearch")
+	qualifier, err := parseQualifier("in:file,in:file")
 	if err != nil {
 		t.Error("FAIL:", err)
 	}
 
-	buf := query.(map[string][]interface{})
+	buf := qualifier.(map[string][]interface{})
+	if len(buf) != 1 || len(buf["in"]) != 1 {
+		t.Error("FAIL")
+	}
+
+	qualifier, err = parseQualifier("in:file,in:path")
+	if err != nil {
+		t.Error("FAIL:", err)
+	}
+
+	buf = qualifier.(map[string][]interface{})
+	if len(buf) != 1 || len(buf["in"]) != 2 {
+		t.Error("FAIL")
+	}
+
+	if _, err := parseQualifier("in:file,language:go,license:apache-2.0,repo:githubsearch,user:craftslab"); err != nil {
+		t.Error("FAIL:", err)
+	}
+}
+
+func TestParseSearch(t *testing.T) {
+	if _, err := parseSearch(""); err == nil {
+		t.Error("FAIL")
+	}
+
+	if _, err := parseSearch("code"); err == nil {
+		t.Error("FAIL")
+	}
+
+	if _, err := parseSearch("code:"); err == nil {
+		t.Error("FAIL")
+	}
+
+	srch, err := parseSearch("code:runSearch,code:runSearch")
+	if err != nil {
+		t.Error("FAIL:", err)
+	}
+
+	buf := srch.(map[string][]interface{})
 	if len(buf) != 1 || len(buf["code"]) != 1 {
 		t.Error("FAIL")
 	}
 
-	query, err = parseQuery("code:runGraphQl,code:runRest")
+	srch, err = parseSearch("code:parseSearch,code:runSearch")
 	if err != nil {
 		t.Error("FAIL:", err)
 	}
 
-	buf = query.(map[string][]interface{})
+	buf = srch.(map[string][]interface{})
 	if len(buf) != 1 || len(buf["code"]) != 2 {
 		t.Error("FAIL")
+	}
+
+	if _, err := parseSearch("code:runSearch,repo:githubsearch"); err != nil {
+		t.Error("FAIL:", err)
 	}
 }
 
 func TestRunSearch(t *testing.T) {
 	config := map[string]interface{}{
-		"graphql": map[string]interface{}{
-			"page":     2,
-			"per_page": 10,
-		},
 		"rest": map[string]interface{}{
+			"order":    "desc",
 			"page":     2,
 			"per_page": 10,
+			"sort":     "stars",
 		},
 	}
 
-	query := map[string][]interface{}{
-		"code":  {"runSearch"},
-		"owner": {"craftslab"},
-		"repo":  {"githubsearch"},
+	qualifier := map[string][]interface{}{
+		"in":       {"file"},
+		"language": {"go"},
+		"license":  {"apache-2.0"},
+		"repo":     {"githubsearch"},
+		"user":     {"craftslab"},
 	}
 
-	if _, err := runSearch("", config, query); err == nil {
+	srch := map[string][]interface{}{
+		"code": {"runSearch"},
+		"repo": {"githubsearch"},
+	}
+
+	if _, err := runSearch("", config, qualifier, srch); err == nil {
 		t.Error("FAIL")
 	}
 
-	if _, err := runSearch("invalid", config, query); err == nil {
+	if _, err := runSearch("invalid", config, qualifier, srch); err == nil {
 		t.Error("FAIL")
 	}
 
-	if _, err := runSearch("graphql", config, query); err != nil {
-		t.Error("FAIL:", err)
-	}
-
-	if _, err := runSearch("rest", config, query); err != nil {
+	if _, err := runSearch("rest", config, qualifier, srch); err != nil {
 		t.Error("FAIL:", err)
 	}
 }

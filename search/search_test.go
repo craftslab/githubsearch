@@ -24,23 +24,29 @@ func TestInitApis(t *testing.T) {
 
 func TestRunSearch(t *testing.T) {
 	config := map[string]interface{}{
-		"page":     2,
-		"per_page": 10,
+		"rest": map[string]interface{}{
+			"order":    "desc",
+			"page":     2,
+			"per_page": 10,
+			"sort":     "stars",
+		},
 	}
 
-	query := map[string][]interface{}{
-		"code":  {"runSearch"},
-		"owner": {"craftslab"},
-		"repo":  {"githubsearch"},
+	qualifier := map[string][]interface{}{
+		"in":       {"file"},
+		"language": {"go"},
+		"license":  {"apache-2.0"},
+		"repo":     {"githubsearch"},
+		"user":     {"craftslab"},
 	}
 
-	graphql := &GraphQl{}
-	if _, err := runSearch(graphql, config, query); err != nil {
-		t.Error("FAIL:", err)
+	srch := map[string][]interface{}{
+		"code": {"runSearch"},
+		"repo": {"githubsearch"},
 	}
 
 	rest := &Rest{}
-	if _, err := runSearch(rest, config, query); err != nil {
+	if _, err := runSearch(rest, config, qualifier, srch); err != nil {
 		t.Error("FAIL:", err)
 	}
 }

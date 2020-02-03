@@ -13,15 +13,16 @@
 package search
 
 const (
-	urlApi        = "https://api.github.com"
-	urlRepo       = urlApi + "/repos"
-	urlSearchCode = urlApi + "/search/code"
-	urlSearchRepo = urlApi + "/search/repositories"
+	urlApi  = "https://api.github.com"
+	urlCode = urlApi + "/search/code"
+	urlRepo = urlApi + "/search/repositories"
 )
 
 const (
+	optionOrder   = "order"
 	optionPage    = "page"
 	optionPerPage = "per_page"
+	optionSort    = "sort"
 )
 
 // Rest is search structure for the REST API
@@ -36,11 +37,11 @@ func (r *Rest) Init(config interface{}) error {
 }
 
 // Run is search implementation for the REST API
-func (r Rest) Run(query interface{}) (interface{}, error) {
-	return r.runRest(query)
+func (r Rest) Run(qualifier, srch interface{}) (interface{}, error) {
+	return r.runRest(qualifier, srch)
 }
 
-func (r Rest) runRest(query interface{}) (interface{}, error) {
+func (r Rest) runRest(qualifier, srch interface{}) (interface{}, error) {
 	// TODO
 	return nil, nil
 }

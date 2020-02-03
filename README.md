@@ -18,29 +18,81 @@
 
 *GitHub Search* supports:
 
-- [GitHub GraphQL API v4](https://developer.github.com/v4/)
+- [~~GitHub GraphQL API v4~~](https://developer.github.com/v4/)
+
 - [GitHub REST API v3](https://developer.github.com/v3/)
 
+  - [Search on GitHub](https://help.github.com/en/github/searching-for-information-on-github)
+  - [Search Query](https://developer.github.com/v3/search/#constructing-a-search-query)
+  - [License Type](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/licensing-a-repository#searching-github-by-license-type)
 
 
-## Examples
+
+## Usage
+
+```bash
+usage: githubsearch --api=API --config=CONFIG --output=OUTPUT --qualifier=QUALIFIER --search=SEARCH [<flags>]
+
+GitHub Search
+
+Flags:
+      --help                 Show context-sensitive help (also try --help-long
+                             and --help-man).
+      --version              Show application version.
+  -a, --api=API              API type, type: graphql rest
+  -c, --config=CONFIG        Config file, format: .json
+  -o, --output=OUTPUT        Output file, format: .json
+  -q, --qualifier=QUALIFIER  Qualifier list, format:
+                             {qualifier}:{query},{qualifier}:{query},...
+  -s, --search=SEARCH        Search list, format: code:{text},repo:{text}
+```
+
+`-q/--qualifier`: See ["Searching on GitHub"](https://help.github.com/articles/searching-on-github/) for a complete list of available qualifiers, their format,
+ and an example of how to use them.
+
+
+
+## Settings
+
+*GitHub Search* parameters can be set in the directory config.
+
+An example of configuration in [search.json](https://github.com/craftslab/githubsearch/blob/master/config/search.json):
+
+```bash
+{
+  "rest": {
+    "order": "desc",
+    "page": 2,
+    "per_page": 10,
+    "sort": "stars"
+  }
+}
+```
+
+
+
+## Running
 
 ```
-githubsearch \
-  --api "graphql" \
-  --config "config/search.json" \
-  --output "output.json" \
-  --query "code:runSearch,owner:craftslab,repo:githubsearch"
-
 githubsearch \
   --api "rest" \
   --config "config/search.json" \
   --output "output.json" \
-  --query "code:runSearch,owner:craftslab,repo:githubsearch"
+  --qualifier "in:file,language:go,license:apache-2.0,repo:githubsearch,user:craftslab" \
+  --search "code:runSearch"
+```
+
+```
+githubsearch \
+  --api "rest" \
+  --config "config/search.json" \
+  --output "output.json" \
+  --qualifier "language:go,license:apache-2.0,user:craftslab" \
+  --search "repo:githubsearch"
 ```
 
 
 
 ## License
 
-[Apache 2.0](LICENSE)
+Project License can be found [here](LICENSE).

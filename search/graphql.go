@@ -24,11 +24,11 @@ func (g *GraphQl) Init(config interface{}) error {
 }
 
 // Run is search implementation for the GraphQL API
-func (g GraphQl) Run(query interface{}) (interface{}, error) {
-	return g.runGraphQl(query)
+func (g GraphQl) Run(qualifier, srch interface{}) (interface{}, error) {
+	return g.runGraphQl(qualifier, srch)
 }
 
-func (g GraphQl) runGraphQl(query interface{}) (interface{}, error) {
+func (g GraphQl) runGraphQl(qualifier, srch interface{}) (interface{}, error) {
 	// TODO
 	return nil, nil
 }

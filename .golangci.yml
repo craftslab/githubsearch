@@ -52,7 +52,6 @@ linters:
     - bodyclose
     - depguard
     - dogsled
-    - dupl
     - errcheck
     - funlen
     - gochecknoinits
@@ -81,6 +80,7 @@ linters:
 
   # don't enable:
   # - deadcode
+  # - dupl
   # - gochecknoglobals
   # - gocognit
   # - godox

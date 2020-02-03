@@ -18,20 +18,21 @@ import (
 
 // Search separator for the CLI
 const (
-	SyntaxSep = ":"
-	TypeSep   = ","
+	QualifierSep = ","
+	SearchSep    = ","
+	SyntaxSep    = ":"
 )
 
 // Search interface for the API
 type Search interface {
 	Init(config interface{}) error
-	Run(query interface{}) (interface{}, error)
+	Run(qualifier, srch interface{}) (interface{}, error)
 }
 
 // Search APIs and types for the CLI
 var (
 	Apis  = initApis()
-	Types = []string{"code", "owner", "repo"}
+	Types = []string{"code", "repo"}
 )
 
 var (
@@ -42,8 +43,8 @@ var (
 )
 
 // Run is search implementation for the API
-func Run(api string, config, query interface{}) (interface{}, error) {
-	return runSearch(searches[api], config, query)
+func Run(api string, config, qualifier, srch interface{}) (interface{}, error) {
+	return runSearch(searches[api], config, qualifier, srch)
 }
 
 func initApis() []string {
@@ -56,10 +57,10 @@ func initApis() []string {
 	return buf
 }
 
-func runSearch(s Search, config, query interface{}) (interface{}, error) {
+func runSearch(s Search, config, qualifier, srch interface{}) (interface{}, error) {
 	if err := s.Init(config); err != nil {
 		return nil, errors.Wrap(err, "init failed")
 	}
 
-	return s.Run(query)
+	return s.Run(qualifier, srch)
 }

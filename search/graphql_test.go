@@ -18,21 +18,23 @@ func TestRunGraphQl(t *testing.T) {
 	graphql := &GraphQl{}
 
 	config := map[string]interface{}{
-		"page":     2,
-		"per_page": 10,
+		// TODO
 	}
 
-	query := map[string][]interface{}{
-		"code":  {"runSearch"},
-		"owner": {"craftslab"},
-		"repo":  {"githubsearch"},
+	qualifier := map[string][]interface{}{
+		// TODO
+	}
+
+	srch := map[string][]interface{}{
+		"code": {"runSearch"},
+		"repo": {"githubsearch"},
 	}
 
 	if err := graphql.Init(config); err != nil {
 		t.Error("FAIL:", err)
 	}
 
-	if _, err := graphql.Run(query); err != nil {
+	if _, err := graphql.Run(qualifier, srch); err != nil {
 		t.Error("FAIL:", err)
 	}
 }

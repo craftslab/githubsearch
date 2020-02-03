@@ -18,21 +18,32 @@ func TestRunRest(t *testing.T) {
 	rest := &Rest{}
 
 	config := map[string]interface{}{
-		"page":     2,
-		"per_page": 10,
+		"rest": map[string]interface{}{
+			"order":    "desc",
+			"page":     2,
+			"per_page": 10,
+			"sort":     "stars",
+		},
 	}
 
-	query := map[string][]interface{}{
-		"code":  {"runSearch"},
-		"owner": {"craftslab"},
-		"repo":  {"githubsearch"},
+	qualifier := map[string][]interface{}{
+		"in":       {"file"},
+		"language": {"go"},
+		"license":  {"apache-2.0"},
+		"repo":     {"githubsearch"},
+		"user":     {"craftslab"},
+	}
+
+	srch := map[string][]interface{}{
+		"code": {"runSearch"},
+		"repo": {"githubsearch"},
 	}
 
 	if err := rest.Init(config); err != nil {
 		t.Error("FAIL:", err)
 	}
 
-	if _, err := rest.Run(query); err != nil {
+	if _, err := rest.Run(qualifier, srch); err != nil {
 		t.Error("FAIL:", err)
 	}
 }
