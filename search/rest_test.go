@@ -18,12 +18,10 @@ func TestRunRest(t *testing.T) {
 	rest := &Rest{}
 
 	config := map[string]interface{}{
-		"rest": map[string]interface{}{
-			"order":    "desc",
-			"page":     2,
-			"per_page": 10,
-			"sort":     "stars",
-		},
+		"order":    "desc",
+		"page":     2,
+		"per_page": 10,
+		"sort":     "stars",
 	}
 
 	qualifier := map[string][]interface{}{
@@ -46,4 +44,28 @@ func TestRunRest(t *testing.T) {
 	if _, err := rest.Run(qualifier, srch); err != nil {
 		t.Error("FAIL:", err)
 	}
+
+	if _, err := rest.Run(map[string][]interface{}{}, map[string][]interface{}{}); err == nil {
+		t.Error("FAIL")
+	}
+}
+
+func TestRequest(t *testing.T) {
+	rest := &Rest{}
+
+	srch := map[string][]interface{}{
+		"invalid": {"runSearch"},
+	}
+
+	if _, err := rest.request(map[string][]interface{}{}, srch); err == nil {
+		t.Error("FAIL:", err)
+	}
+
+	if _, err := rest.request(map[string][]interface{}{}, map[string][]interface{}{}); err == nil {
+		t.Error("FAIL:", err)
+	}
+}
+
+func TestOperation(t *testing.T) {
+	// TODO
 }

@@ -16,6 +16,21 @@ import (
 	"testing"
 )
 
+func TestRun(t *testing.T) {
+	config := map[string]interface{}{
+		"rest": map[string]interface{}{
+			"order":    "desc",
+			"page":     2,
+			"per_page": 10,
+			"sort":     "stars",
+		},
+	}
+
+	if _, err := Run("invalid", config, nil, nil); err == nil {
+		t.Error("FAIL")
+	}
+}
+
 func TestInitApi(t *testing.T) {
 	if buf := initApi(); len(buf) == 0 {
 		t.Error("FAIL")
