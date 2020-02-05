@@ -25,14 +25,14 @@ import (
 
 var (
 	app       = kingpin.New("githubsearch", "GitHub Search").Author(Author).Version(Version)
-	api       = app.Flag("api", "API type, type: "+strings.Join(search.Apis, " ")).Short('a').Required().String()
+	api       = app.Flag("api", "API type, type: "+strings.Join(search.Api, " ")).Short('a').Required().String()
 	config    = app.Flag("config", "Config file, format: .json").Short('c').Required().String()
 	output    = app.Flag("output", "Output file, format: .json").Short('o').Required().String()
 	qualifier = app.Flag("qualifier", "Qualifier list, format: "+
 		"{qualifier}"+search.SyntaxSep+"{query}"+search.QualifierSep+
 		"{qualifier}"+search.SyntaxSep+"{query}"+search.QualifierSep+"...").Short('q').Required().String()
 	srch = app.Flag("search", "Search list, format: "+
-		strings.Join(search.Types, search.SyntaxSep+"{text}"+search.SearchSep)+
+		strings.Join(search.Type, search.SyntaxSep+"{text}"+search.SearchSep)+
 		search.SyntaxSep+"{text}").Short('s').Required().String()
 )
 
@@ -77,7 +77,7 @@ func Run() {
 func parseApi(data string) (string, error) {
 	err := errors.New("data invalid")
 
-	for _, item := range search.Apis {
+	for _, item := range search.Api {
 		if item == data {
 			err = nil
 			break
@@ -183,7 +183,7 @@ func parseSearch(data string) (interface{}, error) {
 			return "", "", false
 		}
 		found := false
-		for _, item := range search.Types {
+		for _, item := range search.Type {
 			if item == key {
 				found = true
 				break
@@ -214,13 +214,9 @@ func parseSearch(data string) (interface{}, error) {
 
 	return srch, nil
 }
-func runSearch(api string, config, qualifier, srch interface{}) (interface{}, error) {
-	cfg, present := config.(map[string]interface{})[api]
-	if !present {
-		return nil, errors.New("api invalid")
-	}
 
-	return search.Run(api, cfg, qualifier, srch)
+func runSearch(api string, config, qualifier, srch interface{}) (interface{}, error) {
+	return search.Run(api, config, qualifier, srch)
 }
 
 func writeFile(name string, data interface{}) error {

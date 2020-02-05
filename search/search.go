@@ -31,8 +31,8 @@ type Search interface {
 
 // Search APIs and types for the CLI
 var (
-	Apis  = initApis()
-	Types = []string{"code", "repo"}
+	Api  = initApi()
+	Type = []string{"code", "repo"}
 )
 
 var (
@@ -44,10 +44,15 @@ var (
 
 // Run is search implementation for the API
 func Run(api string, config, qualifier, srch interface{}) (interface{}, error) {
-	return runSearch(searches[api], config, qualifier, srch)
+	cfg, present := config.(map[string]interface{})[api]
+	if !present {
+		return nil, errors.New("config invalid")
+	}
+
+	return runSearch(searches[api], cfg, qualifier, srch)
 }
 
-func initApis() []string {
+func initApi() []string {
 	var buf []string
 
 	for key := range searches {

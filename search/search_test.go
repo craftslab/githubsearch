@@ -16,20 +16,20 @@ import (
 	"testing"
 )
 
-func TestInitApis(t *testing.T) {
-	if buf := initApis(); len(buf) == 0 {
+func TestInitApi(t *testing.T) {
+	if buf := initApi(); len(buf) == 0 {
 		t.Error("FAIL")
 	}
 }
 
 func TestRunSearch(t *testing.T) {
+	rest := &Rest{}
+
 	config := map[string]interface{}{
-		"rest": map[string]interface{}{
-			"order":    "desc",
-			"page":     2,
-			"per_page": 10,
-			"sort":     "stars",
-		},
+		"order":    "desc",
+		"page":     2,
+		"per_page": 10,
+		"sort":     "stars",
 	}
 
 	qualifier := map[string][]interface{}{
@@ -45,7 +45,6 @@ func TestRunSearch(t *testing.T) {
 		"repo": {"githubsearch"},
 	}
 
-	rest := &Rest{}
 	if _, err := runSearch(rest, config, qualifier, srch); err != nil {
 		t.Error("FAIL:", err)
 	}

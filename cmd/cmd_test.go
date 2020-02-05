@@ -181,14 +181,6 @@ func TestRunSearch(t *testing.T) {
 		"repo": {"githubsearch"},
 	}
 
-	if _, err := runSearch("", config, qualifier, srch); err == nil {
-		t.Error("FAIL")
-	}
-
-	if _, err := runSearch("invalid", config, qualifier, srch); err == nil {
-		t.Error("FAIL")
-	}
-
 	if _, err := runSearch("rest", config, qualifier, srch); err != nil {
 		t.Error("FAIL:", err)
 	}
