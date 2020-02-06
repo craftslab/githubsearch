@@ -72,58 +72,13 @@ func (r Rest) request(qualifier, srch interface{}) ([]runtime.Request, error) {
 		return req, nil
 	}
 
-	option := func(data interface{}) string {
-		if _, present := data.(map[string]interface{}); !present {
-			return ""
-		}
-		buf := data.(map[string]interface{})
-		if len(buf) == 0 {
-			return ""
-		}
-		var ret []string
-		for _, item := range options {
-			if _, present := buf[item]; !present {
-				continue
-			}
-			switch val := buf[item].(type) {
-			case int:
-				ret = append(ret, "&"+item+"="+strconv.Itoa(val))
-			case string:
-				ret = append(ret, "&"+item+"="+val)
-			default:
-				// TODO
-			}
-		}
-		return strings.Join(ret, "")
-	}(r.config)
-
-	query := func(data interface{}) string {
-		if _, present := data.(map[string][]interface{}); !present {
-			return ""
-		}
-		buf := data.(map[string][]interface{})
-		if len(buf) == 0 {
-			return ""
-		}
-		var ret []string
-		for key, val := range buf {
-			for _, item := range val {
-				if _, present := item.(string); present {
-					ret = append(ret, "+"+key+":"+item.(string))
-				} else {
-					// TODO
-					continue
-				}
-			}
-		}
-		return strings.Join(ret, "")
-	}(qualifier)
-
 	var req []runtime.Request
+	qry := r.query(qualifier)
+	opt := r.option(r.config)
 
 	for key, val := range srch.(map[string][]interface{}) {
 		for _, item := range val {
-			r, err := helper(key, item.(string), query, option)
+			r, err := helper(key, item.(string), qry, opt)
 			if err != nil {
 				return nil, err
 			}
@@ -136,6 +91,62 @@ func (r Rest) request(qualifier, srch interface{}) ([]runtime.Request, error) {
 	}
 
 	return req, nil
+}
+
+func (r Rest) query(data interface{}) string {
+	if _, present := data.(map[string][]interface{}); !present {
+		return ""
+	}
+
+	buf := data.(map[string][]interface{})
+	if len(buf) == 0 {
+		return ""
+	}
+
+	var ret []string
+
+	for key, val := range buf {
+		for _, item := range val {
+			if _, present := item.(string); present {
+				ret = append(ret, "+"+key+":"+item.(string))
+			} else {
+				// TODO
+				continue
+			}
+		}
+	}
+
+	return strings.Join(ret, "")
+}
+
+func (r Rest) option(data interface{}) string {
+	if _, present := data.(map[string]interface{}); !present {
+		return ""
+	}
+
+	buf := data.(map[string]interface{})
+	if len(buf) == 0 {
+		return ""
+	}
+
+	var ret []string
+
+	for _, item := range options {
+		if _, present := buf[item]; !present {
+			continue
+		}
+
+		switch val := buf[item].(type) {
+		case int:
+			ret = append(ret, "&"+item+"="+strconv.Itoa(val))
+		case string:
+			ret = append(ret, "&"+item+"="+val)
+		default:
+			// TODO
+		}
+	}
+
+	return strings.Join(ret, "")
 }
 
 func (r Rest) operation(req *runtime.Request) interface{} {

@@ -66,6 +66,47 @@ func TestRequest(t *testing.T) {
 	}
 }
 
+func TestQuery(t *testing.T) {
+	rest := &Rest{}
+
+	if qry := rest.query([]interface{}{}); qry != "" {
+		t.Error("FAIL")
+	}
+
+	if qry := rest.query(map[string][]interface{}{}); qry != "" {
+		t.Error("FAIL")
+	}
+
+	qualifier := map[string][]interface{}{
+		"in": {1},
+	}
+
+	if qry := rest.query(qualifier); qry != "" {
+		t.Error("FAIL")
+	}
+}
+
+func TestOption(t *testing.T) {
+	rest := &Rest{}
+
+	if opt := rest.option([]interface{}{}); opt != "" {
+		t.Error("FAIL")
+	}
+
+	if opt := rest.option(map[string]interface{}{}); opt != "" {
+		t.Error("FAIL")
+	}
+
+	config := map[string]interface{}{
+		"invalid": "desc",
+		"order":   []interface{}{"desc"},
+	}
+
+	if opt := rest.option(config); opt != "" {
+		t.Error("FAIL")
+	}
+}
+
 func TestOperation(t *testing.T) {
 	// TODO
 }
