@@ -113,7 +113,7 @@ func TestParseQualifier(t *testing.T) {
 		t.Error("FAIL")
 	}
 
-	if _, err := parseQualifier("in:file,language:go,license:apache-2.0,repo:githubsearch,user:craftslab"); err != nil {
+	if _, err := parseQualifier("in:file,language:go,repo:githubsearch,user:craftslab"); err != nil {
 		t.Error("FAIL:", err)
 	}
 }

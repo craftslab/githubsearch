@@ -78,7 +78,7 @@ githubsearch \
   --api "rest" \
   --config "config/search.json" \
   --output "output.json" \
-  --qualifier "in:file,language:go,license:apache-2.0,repo:githubsearch,user:craftslab" \
+  --qualifier "in:file,language:go,repo:githubsearch,user:craftslab" \
   --search "code:runSearch"
 ```
 
@@ -87,7 +87,7 @@ githubsearch \
   --api "rest" \
   --config "config/search.json" \
   --output "output.json" \
-  --qualifier "language:go,license:apache-2.0,user:craftslab" \
+  --qualifier "language:go,user:craftslab" \
   --search "repo:githubsearch"
 ```
 

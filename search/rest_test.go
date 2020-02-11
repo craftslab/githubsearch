@@ -106,7 +106,7 @@ func TestOperation(t *testing.T) {
 	rest := &Rest{}
 
 	req := runtime.Request{
-		Url: "https://api.github.com/search/code?q=runSearch+user:craftslab+in:file+language:go+license:apache-2.0+" +
+		Url: "https://api.github.com/search/code?q=runSearch+user:craftslab+in:file+language:go+" +
 			"repo:githubsearch&order=desc&page=1&per_page=1&sort=stars",
 		Val: nil,
 	}
@@ -119,8 +119,8 @@ func TestOperation(t *testing.T) {
 	t.Log(string(buf.([]byte)))
 
 	req = runtime.Request{
-		Url: "https://api.github.com/search/repositories?q=githubsearch+user:craftslab+in:file+language:go+" +
-			"license:apache-2.0&order=desc&page=1&per_page=1&sort=stars",
+		Url: "https://api.github.com/search/repositories?q=githubsearch+user:craftslab+in:file+" +
+			"language:go&order=desc&page=1&per_page=1&sort=stars",
 		Val: nil,
 	}
 
