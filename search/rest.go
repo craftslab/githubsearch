@@ -15,6 +15,8 @@ package search
 import (
 	"github.com/craftslab/githubsearch/runtime"
 	"github.com/pkg/errors"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"strings"
 )
@@ -150,6 +152,18 @@ func (r Rest) option(data interface{}) string {
 }
 
 func (r Rest) operation(req *runtime.Request) interface{} {
-	// TODO
-	return nil
+	// TODO: req.Val
+	resp, err := http.Get(req.Url)
+	if err != nil {
+		return nil
+	}
+
+	defer func() { _ = resp.Body.Close() }()
+
+	buf, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil
+	}
+
+	return buf
 }

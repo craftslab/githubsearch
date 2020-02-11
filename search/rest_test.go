@@ -12,7 +12,10 @@
 
 package search
 
-import "testing"
+import (
+	"github.com/craftslab/githubsearch/runtime"
+	"testing"
+)
 
 func TestRunRest(t *testing.T) {
 	rest := &Rest{}
@@ -108,5 +111,31 @@ func TestOption(t *testing.T) {
 }
 
 func TestOperation(t *testing.T) {
-	// TODO
+	rest := &Rest{}
+
+	req := runtime.Request{
+		Url: "https://api.github.com/search/code?q=runSearch+user:craftslab+in:file+language:go+license:apache-2.0+" +
+			"repo:githubsearch&order=desc&page=1&per_page=1&sort=stars",
+		Val: nil,
+	}
+
+	buf := rest.operation(&req)
+	if buf == nil {
+		t.Error("FAIL")
+	}
+
+	t.Log(string(buf.([]byte)))
+
+	req = runtime.Request{
+		Url: "https://api.github.com/search/repositories?q=githubsearch+user:craftslab+in:file+language:go+" +
+			"license:apache-2.0&order=desc&page=1&per_page=1&sort=stars",
+		Val: nil,
+	}
+
+	buf = rest.operation(&req)
+	if buf == nil {
+		t.Error("FAIL")
+	}
+
+	t.Log(string(buf.([]byte)))
 }
