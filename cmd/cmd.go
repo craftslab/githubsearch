@@ -88,7 +88,7 @@ func parseApi(data string) (string, error) {
 	return data, err
 }
 
-func parseConfig(name string) (interface{}, error) {
+func parseConfig(name string) (map[string]interface{}, error) {
 	file, err := os.Open(name)
 	if err != nil {
 		return nil, errors.Wrap(err, "open failed")
@@ -121,11 +121,11 @@ func parseOutput(name string) error {
 	return nil
 }
 
-func removeDuplicate(data interface{}) interface{} {
+func removeDuplicate(data []interface{}) []interface{} {
 	var buf []interface{}
 	key := map[string]bool{}
 
-	for _, item := range data.([]interface{}) {
+	for _, item := range data {
 		if _, present := key[item.(string)]; !present {
 			key[item.(string)] = true
 			buf = append(buf, item.(string))
@@ -135,7 +135,7 @@ func removeDuplicate(data interface{}) interface{} {
 	return buf
 }
 
-func parseQualifier(data string) (interface{}, error) {
+func parseQualifier(data string) (map[string][]interface{}, error) {
 	helper := func(data string) (string, string, bool) {
 		if !strings.Contains(data, search.SyntaxSep) {
 			return "", "", false
@@ -166,13 +166,13 @@ func parseQualifier(data string) (interface{}, error) {
 	}
 
 	for key := range qualifier {
-		qualifier[key] = removeDuplicate(qualifier[key]).([]interface{})
+		qualifier[key] = removeDuplicate(qualifier[key])
 	}
 
 	return qualifier, nil
 }
 
-func parseSearch(data string) (interface{}, error) {
+func parseSearch(data string) (map[string][]interface{}, error) {
 	helper := func(data string) (string, string, bool) {
 		if !strings.Contains(data, search.SyntaxSep) {
 			return "", "", false
@@ -214,17 +214,17 @@ func parseSearch(data string) (interface{}, error) {
 	}
 
 	for key := range srch {
-		srch[key] = removeDuplicate(srch[key]).([]interface{})
+		srch[key] = removeDuplicate(srch[key])
 	}
 
 	return srch, nil
 }
 
-func runSearch(api string, config, qualifier, srch interface{}) (interface{}, error) {
+func runSearch(api string, config map[string]interface{}, qualifier, srch map[string][]interface{}) ([]interface{}, error) {
 	return search.Run(api, config, qualifier, srch)
 }
 
-func writeFile(name string, data interface{}) error {
+func writeFile(name string, data []interface{}) error {
 	buf, err := json.Marshal(data)
 	if err != nil {
 		return errors.Wrap(err, "marshal failed")

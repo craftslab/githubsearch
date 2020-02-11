@@ -14,21 +14,21 @@ package search
 
 // GraphQl is search structure for the GraphQL API
 type GraphQl struct {
-	config interface{}
+	config map[string]interface{}
 }
 
 // Init is search initialization for the GraphQL API
-func (g *GraphQl) Init(config interface{}) error {
+func (g *GraphQl) Init(config map[string]interface{}) error {
 	g.config = config
 	return nil
 }
 
 // Run is search implementation for the GraphQL API
-func (g GraphQl) Run(qualifier, srch interface{}) (interface{}, error) {
+func (g GraphQl) Run(qualifier, srch map[string][]interface{}) ([]interface{}, error) {
 	return g.runGraphQl(qualifier, srch)
 }
 
-func (g GraphQl) runGraphQl(qualifier, srch interface{}) (interface{}, error) {
+func (g GraphQl) runGraphQl(qualifier, srch map[string][]interface{}) ([]interface{}, error) {
 	// TODO
 	return nil, nil
 }

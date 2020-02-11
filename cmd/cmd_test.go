@@ -75,7 +75,7 @@ func checkDuplicate(data []interface{}) bool {
 
 func TestRemoveDuplicate(t *testing.T) {
 	buf := []interface{}{"code:runSearch", "code:runSearch"}
-	buf = removeDuplicate(buf).([]interface{})
+	buf = removeDuplicate(buf)
 
 	if found := checkDuplicate(buf); found {
 		t.Error("FAIL")
@@ -100,8 +100,7 @@ func TestParseQualifier(t *testing.T) {
 		t.Error("FAIL:", err)
 	}
 
-	buf := qualifier.(map[string][]interface{})
-	if len(buf) != 1 || len(buf["in"]) != 1 {
+	if len(qualifier) != 1 || len(qualifier["in"]) != 1 {
 		t.Error("FAIL")
 	}
 
@@ -110,8 +109,7 @@ func TestParseQualifier(t *testing.T) {
 		t.Error("FAIL:", err)
 	}
 
-	buf = qualifier.(map[string][]interface{})
-	if len(buf) != 1 || len(buf["in"]) != 2 {
+	if len(qualifier) != 1 || len(qualifier["in"]) != 2 {
 		t.Error("FAIL")
 	}
 
@@ -142,8 +140,7 @@ func TestParseSearch(t *testing.T) {
 		t.Error("FAIL:", err)
 	}
 
-	buf := srch.(map[string][]interface{})
-	if len(buf) != 1 || len(buf["code"]) != 1 {
+	if len(srch) != 1 || len(srch["code"]) != 1 {
 		t.Error("FAIL")
 	}
 
@@ -152,8 +149,7 @@ func TestParseSearch(t *testing.T) {
 		t.Error("FAIL:", err)
 	}
 
-	buf = srch.(map[string][]interface{})
-	if len(buf) != 1 || len(buf["code"]) != 2 {
+	if len(srch) != 1 || len(srch["code"]) != 2 {
 		t.Error("FAIL")
 	}
 }
@@ -187,18 +183,17 @@ func TestRunSearch(t *testing.T) {
 }
 
 func TestWriteFile(t *testing.T) {
-	buf := map[string]interface{}{
-		"k": "key",
-		"v": "value",
-	}
+	var buf []interface{}
 
-	name := "tmp.json"
+	buf = append(buf, `{"key": "val"}`)
 
 	if err := writeFile("", buf); err == nil {
 		t.Error("FAIL")
 	}
 
-	if err := writeFile(name, func() {}); err == nil {
+	name := "tmp.json"
+
+	if err := writeFile(name, []interface{}{}); err == nil {
 		t.Error("FAIL")
 	}
 

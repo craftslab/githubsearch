@@ -27,7 +27,7 @@ const (
 
 // Rest is search structure for the REST API
 type Rest struct {
-	config interface{}
+	config map[string]interface{}
 }
 
 var (
@@ -36,17 +36,17 @@ var (
 )
 
 // Init is search initialization for the REST API
-func (r *Rest) Init(config interface{}) error {
+func (r *Rest) Init(config map[string]interface{}) error {
 	r.config = config
 	return nil
 }
 
 // Run is search implementation for the REST API
-func (r Rest) Run(qualifier, srch interface{}) (interface{}, error) {
+func (r Rest) Run(qualifier, srch map[string][]interface{}) ([]interface{}, error) {
 	return r.runRest(qualifier, srch)
 }
 
-func (r Rest) runRest(qualifier, srch interface{}) (interface{}, error) {
+func (r Rest) runRest(qualifier, srch map[string][]interface{}) ([]interface{}, error) {
 	req, err := r.request(qualifier, srch)
 	if err != nil {
 		return nil, errors.Wrap(err, "request invalid")
@@ -55,7 +55,7 @@ func (r Rest) runRest(qualifier, srch interface{}) (interface{}, error) {
 	return runtime.Run(r.operation, req)
 }
 
-func (r Rest) request(qualifier, srch interface{}) ([]runtime.Request, error) {
+func (r Rest) request(qualifier, srch map[string][]interface{}) ([]runtime.Request, error) {
 	helper := func(_type, srch, query, option string) (runtime.Request, error) {
 		url := ""
 		for _, u := range urls {
@@ -78,7 +78,7 @@ func (r Rest) request(qualifier, srch interface{}) ([]runtime.Request, error) {
 	qry := r.query(qualifier)
 	opt := r.option(r.config)
 
-	for key, val := range srch.(map[string][]interface{}) {
+	for key, val := range srch {
 		for _, item := range val {
 			r, err := helper(key, item.(string), qry, opt)
 			if err != nil {
@@ -95,19 +95,14 @@ func (r Rest) request(qualifier, srch interface{}) ([]runtime.Request, error) {
 	return req, nil
 }
 
-func (r Rest) query(data interface{}) string {
-	if _, present := data.(map[string][]interface{}); !present {
-		return ""
-	}
-
-	buf := data.(map[string][]interface{})
-	if len(buf) == 0 {
+func (r Rest) query(data map[string][]interface{}) string {
+	if len(data) == 0 {
 		return ""
 	}
 
 	var ret []string
 
-	for key, val := range buf {
+	for key, val := range data {
 		for _, item := range val {
 			if _, present := item.(string); present {
 				ret = append(ret, "+"+key+":"+item.(string))
@@ -121,24 +116,19 @@ func (r Rest) query(data interface{}) string {
 	return strings.Join(ret, "")
 }
 
-func (r Rest) option(data interface{}) string {
-	if _, present := data.(map[string]interface{}); !present {
-		return ""
-	}
-
-	buf := data.(map[string]interface{})
-	if len(buf) == 0 {
+func (r Rest) option(data map[string]interface{}) string {
+	if len(data) == 0 {
 		return ""
 	}
 
 	var ret []string
 
 	for _, item := range options {
-		if _, present := buf[item]; !present {
+		if _, present := data[item]; !present {
 			continue
 		}
 
-		switch val := buf[item].(type) {
+		switch val := data[item].(type) {
 		case int:
 			ret = append(ret, "&"+item+"="+strconv.Itoa(val))
 		case string:

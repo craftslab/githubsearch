@@ -25,8 +25,8 @@ const (
 
 // Search interface for the API
 type Search interface {
-	Init(config interface{}) error
-	Run(qualifier, srch interface{}) (interface{}, error)
+	Init(config map[string]interface{}) error
+	Run(qualifier, srch map[string][]interface{}) ([]interface{}, error)
 }
 
 // Search APIs and types for the CLI
@@ -43,13 +43,13 @@ var (
 )
 
 // Run is search implementation for the API
-func Run(api string, config, qualifier, srch interface{}) (interface{}, error) {
-	cfg, present := config.(map[string]interface{})[api]
+func Run(api string, config map[string]interface{}, qualifier, srch map[string][]interface{}) ([]interface{}, error) {
+	cfg, present := config[api]
 	if !present {
 		return nil, errors.New("config invalid")
 	}
 
-	return runSearch(searches[api], cfg, qualifier, srch)
+	return runSearch(searches[api], cfg.(map[string]interface{}), qualifier, srch)
 }
 
 func initApi() []string {
@@ -62,7 +62,7 @@ func initApi() []string {
 	return buf
 }
 
-func runSearch(s Search, config, qualifier, srch interface{}) (interface{}, error) {
+func runSearch(s Search, config map[string]interface{}, qualifier, srch map[string][]interface{}) ([]interface{}, error) {
 	if err := s.Init(config); err != nil {
 		return nil, errors.Wrap(err, "init failed")
 	}

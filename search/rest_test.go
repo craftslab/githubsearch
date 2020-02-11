@@ -72,10 +72,6 @@ func TestRequest(t *testing.T) {
 func TestQuery(t *testing.T) {
 	rest := &Rest{}
 
-	if qry := rest.query([]interface{}{}); qry != "" {
-		t.Error("FAIL")
-	}
-
 	if qry := rest.query(map[string][]interface{}{}); qry != "" {
 		t.Error("FAIL")
 	}
@@ -91,10 +87,6 @@ func TestQuery(t *testing.T) {
 
 func TestOption(t *testing.T) {
 	rest := &Rest{}
-
-	if opt := rest.option([]interface{}{}); opt != "" {
-		t.Error("FAIL")
-	}
 
 	if opt := rest.option(map[string]interface{}{}); opt != "" {
 		t.Error("FAIL")
