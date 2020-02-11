@@ -20,19 +20,20 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
 	"strings"
 )
 
 var (
 	app       = kingpin.New("githubsearch", "GitHub Search").Author(Author).Version(Version)
-	api       = app.Flag("api", "API type, type: "+strings.Join(search.Api, " ")).Short('a').Required().String()
+	api       = app.Flag("api", "API type, format: "+strings.Join(search.Api, " or ")).Short('a').Required().String()
 	config    = app.Flag("config", "Config file, format: .json").Short('c').Required().String()
 	output    = app.Flag("output", "Output file, format: .json").Short('o').Required().String()
 	qualifier = app.Flag("qualifier", "Qualifier list, format: "+
 		"{qualifier}"+search.SyntaxSep+"{query}"+search.QualifierSep+
 		"{qualifier}"+search.SyntaxSep+"{query}"+search.QualifierSep+"...").Short('q').Required().String()
 	srch = app.Flag("search", "Search list, format: "+
-		strings.Join(search.Type, search.SyntaxSep+"{text}"+search.SearchSep)+
+		strings.Join(search.Type, search.SyntaxSep+"{text}"+" or ")+
 		search.SyntaxSep+"{text}").Short('s').Required().String()
 )
 
@@ -206,6 +207,10 @@ func parseSearch(data string) (interface{}, error) {
 
 	if len(srch) == 0 {
 		return srch, errors.New("search null")
+	}
+
+	if len(reflect.ValueOf(srch).MapKeys()) == len(search.Type) {
+		return srch, errors.New("type inconsistent")
 	}
 
 	for key := range srch {

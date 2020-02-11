@@ -39,12 +39,12 @@ Flags:
       --help                 Show context-sensitive help (also try --help-long
                              and --help-man).
       --version              Show application version.
-  -a, --api=API              API type, type: graphql rest
+  -a, --api=API              API type, format: graphql or rest
   -c, --config=CONFIG        Config file, format: .json
   -o, --output=OUTPUT        Output file, format: .json
   -q, --qualifier=QUALIFIER  Qualifier list, format:
                              {qualifier}:{query},{qualifier}:{query},...
-  -s, --search=SEARCH        Search list, format: code:{text},repo:{text}
+  -s, --search=SEARCH        Search list, format: code:{text} or repo:{text}
 ```
 
 `-q/--qualifier`: See ["Searching on GitHub"](https://help.github.com/articles/searching-on-github/) for a complete list of available qualifiers, their format,

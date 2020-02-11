@@ -133,6 +133,10 @@ func TestParseSearch(t *testing.T) {
 		t.Error("FAIL")
 	}
 
+	if _, err := parseSearch("code:runSearch,repo:githubsearch"); err == nil {
+		t.Error("FAIL")
+	}
+
 	srch, err := parseSearch("code:runSearch,code:runSearch")
 	if err != nil {
 		t.Error("FAIL:", err)
@@ -151,10 +155,6 @@ func TestParseSearch(t *testing.T) {
 	buf = srch.(map[string][]interface{})
 	if len(buf) != 1 || len(buf["code"]) != 2 {
 		t.Error("FAIL")
-	}
-
-	if _, err := parseSearch("code:runSearch,repo:githubsearch"); err != nil {
-		t.Error("FAIL:", err)
 	}
 }
 
