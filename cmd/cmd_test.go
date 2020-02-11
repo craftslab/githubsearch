@@ -183,21 +183,16 @@ func TestRunSearch(t *testing.T) {
 }
 
 func TestWriteFile(t *testing.T) {
-	var buf []interface{}
-
-	buf = append(buf, `{"key": "val"}`)
-
-	if err := writeFile("", buf); err == nil {
+	if err := writeFile("rest", "", []interface{}{}); err == nil {
 		t.Error("FAIL")
 	}
 
 	name := "tmp.json"
-
-	if err := writeFile(name, []interface{}{}); err == nil {
-		t.Error("FAIL")
+	buf := []interface{}{
+		[]byte(`{"key": "value"}`),
 	}
 
-	err := writeFile(name, buf)
+	err := writeFile("rest", name, buf)
 	defer func(name string) { _ = os.Remove(name) }(name)
 	if err != nil {
 		t.Error("FAIL:", err)

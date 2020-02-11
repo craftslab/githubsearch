@@ -70,7 +70,7 @@ func Run() {
 		log.Fatal("search failed: ", err.Error())
 	}
 
-	if err := writeFile(*output, result); err != nil {
+	if err := writeFile(api, *output, result); err != nil {
 		log.Fatal("write failed: ", err.Error())
 	}
 }
@@ -224,8 +224,21 @@ func runSearch(api string, config map[string]interface{}, qualifier, srch map[st
 	return search.Run(api, config, qualifier, srch)
 }
 
-func writeFile(name string, data []interface{}) error {
-	buf, err := json.Marshal(data)
+func writeFile(api, name string, data []interface{}) error {
+	if len(data) == 0 {
+		return errors.New("write null")
+	}
+
+	content := map[string][]interface{}{}
+
+	for _, item := range data {
+		buf := map[string]interface{}{}
+		if err := json.Unmarshal(item.([]byte), &buf); err == nil {
+			content[api] = append(content[api], buf)
+		}
+	}
+
+	buf, err := json.Marshal(content)
 	if err != nil {
 		return errors.Wrap(err, "marshal failed")
 	}
