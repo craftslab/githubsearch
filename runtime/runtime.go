@@ -59,7 +59,7 @@ func runRuntime(op Operation, req []Request) (interface{}, error) {
 	buf := make([]interface{}, len(req))
 
 	for i := 0; i < len(req); i++ {
-		buf = append(buf, <-bundles[i].resp)
+		buf[i] = <-bundles[i].resp
 	}
 
 	quit <- true
