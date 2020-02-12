@@ -14,7 +14,7 @@
 
 
 
-## Features
+## Feature
 
 *GitHub Search* supports:
 
@@ -52,7 +52,7 @@ Flags:
 
 
 
-## Settings
+## Setting
 
 *GitHub Search* parameters can be set in the directory config.
 

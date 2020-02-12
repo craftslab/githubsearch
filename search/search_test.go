@@ -50,7 +50,6 @@ func TestRunSearch(t *testing.T) {
 	qualifier := map[string][]interface{}{
 		"in":       {"file"},
 		"language": {"go"},
-		"license":  {"apache-2.0"},
 		"repo":     {"githubsearch"},
 		"user":     {"craftslab"},
 	}
