@@ -75,20 +75,20 @@ An example of configuration in [search.json](https://github.com/craftslab/github
 
 ```
 githubsearch \
-  --api "rest" \
-  --config "config/search.json" \
-  --output "output.json" \
-  --qualifier "in:file,language:go,repo:githubsearch,user:craftslab" \
-  --search "code:runSearch"
+  --api="rest" \
+  --config="config/search.json" \
+  --output="output.json" \
+  --qualifier="in:file,language:go,repo:githubsearch,user:craftslab" \
+  --search="code:runSearch"
 ```
 
 ```
 githubsearch \
-  --api "rest" \
-  --config "config/search.json" \
-  --output "output.json" \
-  --qualifier "language:go,user:craftslab" \
-  --search "repo:githubsearch"
+  --api="rest" \
+  --config="config/search.json" \
+  --output="output.json" \
+  --qualifier="language:go,user:craftslab" \
+  --search="repo:githubsearch"
 ```
 
 
