@@ -12,30 +12,20 @@
 
 package runtime
 
-import (
-	"net/url"
-)
-
 // Operation type for the runtime
-type Operation func(req *Request) interface{}
-
-// Request structure for the runtime
-type Request struct {
-	Url string
-	Val url.Values
-}
+type Operation func(req interface{}) interface{}
 
 type bundle struct {
-	req  *Request
+	req  interface{}
 	resp chan interface{}
 }
 
 // Run is runtime implementation for the runtime
-func Run(op Operation, req []Request) ([]interface{}, error) {
+func Run(op Operation, req []interface{}) ([]interface{}, error) {
 	return runRuntime(op, req)
 }
 
-func runRuntime(op Operation, req []Request) ([]interface{}, error) {
+func runRuntime(op Operation, req []interface{}) ([]interface{}, error) {
 	helper := func(op Operation) (chan *bundle, chan bool) {
 		data := make(chan *bundle)
 		quit := make(chan bool)
@@ -51,7 +41,7 @@ func runRuntime(op Operation, req []Request) ([]interface{}, error) {
 
 	for i := 0; i < len(req); i++ {
 		b := &bundles[i]
-		b.req = &req[i]
+		b.req = req[i]
 		b.resp = make(chan interface{})
 		channel <- b
 	}

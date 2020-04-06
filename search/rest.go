@@ -15,6 +15,7 @@ package search
 import (
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -25,6 +26,12 @@ import (
 const (
 	host = "https://api.github.com"
 )
+
+// Request structure for the runtime
+type Request struct {
+	Url string
+	Val url.Values
+}
 
 // Rest is search structure for the REST API
 type Rest struct {
@@ -56,26 +63,26 @@ func (r Rest) runRest(qualifier, srch map[string][]interface{}) ([]interface{}, 
 	return runtime.Run(r.operation, req)
 }
 
-func (r Rest) request(qualifier, srch map[string][]interface{}) ([]runtime.Request, error) {
-	helper := func(_type, srch, query, option string) (runtime.Request, error) {
-		url := ""
+func (r Rest) request(qualifier, srch map[string][]interface{}) ([]interface{}, error) {
+	helper := func(_type, srch, query, option string) (Request, error) {
+		_url := ""
 		for _, u := range urls {
 			if strings.Contains(u, _type) {
-				url = u
+				_url = u
 				break
 			}
 		}
-		if url == "" {
-			return runtime.Request{}, errors.New("url invalid")
+		if _url == "" {
+			return Request{}, errors.New("url invalid")
 		}
-		req := runtime.Request{
-			Url: url + "?q=" + srch + query + option,
+		req := Request{
+			Url: _url + "?q=" + srch + query + option,
 			Val: nil,
 		}
 		return req, nil
 	}
 
-	var req []runtime.Request
+	var req []interface{}
 	qry := r.query(qualifier)
 	opt := r.option(r.config)
 
@@ -142,9 +149,9 @@ func (r Rest) option(data map[string]interface{}) string {
 	return strings.Join(ret, "")
 }
 
-func (r Rest) operation(req *runtime.Request) interface{} {
+func (r Rest) operation(req interface{}) interface{} {
 	// TODO: req.Val
-	resp, err := http.Get(req.Url)
+	resp, err := http.Get(req.(Request).Url)
 	if err != nil {
 		return nil
 	}

@@ -21,16 +21,11 @@ import (
 func TestRunRuntime(t *testing.T) {
 	defer goleak.VerifyNone(t)
 
-	op := func(req *Request) interface{} {
+	op := func(req interface{}) interface{} {
 		return nil
 	}
 
-	req := []Request{
-		{
-			Url: "https://example.com",
-			Val: nil,
-		},
-	}
+	req := []interface{}{}
 
 	if _, err := runRuntime(op, req); err != nil {
 		t.Error("FAIL:", err)
