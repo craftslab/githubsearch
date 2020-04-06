@@ -13,8 +13,9 @@
 package search
 
 import (
-	"github.com/craftslab/githubsearch/runtime"
 	"testing"
+
+	"github.com/craftslab/githubsearch/runtime"
 )
 
 func TestRunRest(t *testing.T) {

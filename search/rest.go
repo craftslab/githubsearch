@@ -13,12 +13,13 @@
 package search
 
 import (
-	"github.com/craftslab/githubsearch/runtime"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/craftslab/githubsearch/runtime"
+	"github.com/pkg/errors"
 )
 
 const (

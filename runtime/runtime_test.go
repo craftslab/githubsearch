@@ -13,8 +13,9 @@
 package runtime
 
 import (
-	"go.uber.org/goleak"
 	"testing"
+
+	"go.uber.org/goleak"
 )
 
 func TestRunRuntime(t *testing.T) {

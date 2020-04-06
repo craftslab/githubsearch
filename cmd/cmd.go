@@ -14,14 +14,15 @@ package cmd
 
 import (
 	"encoding/json"
-	"github.com/craftslab/githubsearch/search"
-	"github.com/pkg/errors"
-	"gopkg.in/alecthomas/kingpin.v2"
 	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
 	"strings"
+
+	"github.com/craftslab/githubsearch/search"
+	"github.com/pkg/errors"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
