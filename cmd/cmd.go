@@ -233,6 +233,9 @@ func writeFile(api, name string, data []interface{}) error {
 	content := map[string][]interface{}{}
 
 	for _, item := range data {
+		if item == nil {
+			return errors.New("write null")
+		}
 		buf := map[string]interface{}{}
 		if err := json.Unmarshal(item.([]byte), &buf); err == nil {
 			content[api] = append(content[api], buf)

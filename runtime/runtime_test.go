@@ -25,7 +25,7 @@ func TestRunRuntime(t *testing.T) {
 		return nil
 	}
 
-	req := []interface{}{}
+	var req []interface{}
 
 	if _, err := runRuntime(op, req); err != nil {
 		t.Error("FAIL:", err)

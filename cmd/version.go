@@ -15,5 +15,5 @@ package cmd
 // Author and version for search as declaration
 const (
 	Author  = "Jia Jia"
-	Version = "1.0.2"
+	Version = "1.0.3"
 )
