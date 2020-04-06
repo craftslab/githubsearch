@@ -104,9 +104,9 @@ func TestOperation(t *testing.T) {
 	rest := &Rest{}
 
 	req := Request{
-		Url: "https://api.github.com/search/code?q=runSearch+user:craftslab+in:file+language:go+" +
+		url: "https://api.github.com/search/code?q=runSearch+user:craftslab+in:file+language:go+" +
 			"repo:githubsearch&order=desc&page=1&per_page=1&sort=stars",
-		Val: nil,
+		val: nil,
 	}
 
 	buf := rest.operation(req)
@@ -117,9 +117,9 @@ func TestOperation(t *testing.T) {
 	t.Log(string(buf.([]byte)))
 
 	req = Request{
-		Url: "https://api.github.com/search/repositories?q=githubsearch+user:craftslab+in:file+" +
+		url: "https://api.github.com/search/repositories?q=githubsearch+user:craftslab+in:file+" +
 			"language:go&order=desc&page=1&per_page=1&sort=stars",
-		Val: nil,
+		val: nil,
 	}
 
 	buf = rest.operation(req)

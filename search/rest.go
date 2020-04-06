@@ -29,8 +29,8 @@ const (
 
 // Request structure for the runtime
 type Request struct {
-	Url string
-	Val url.Values
+	url string
+	val url.Values
 }
 
 // Rest is search structure for the REST API
@@ -76,8 +76,8 @@ func (r Rest) request(qualifier, srch map[string][]interface{}) ([]interface{}, 
 			return Request{}, errors.New("url invalid")
 		}
 		req := Request{
-			Url: _url + "?q=" + srch + query + option,
-			Val: nil,
+			url: _url + "?q=" + srch + query + option,
+			val: nil,
 		}
 		return req, nil
 	}
@@ -150,8 +150,8 @@ func (r Rest) option(data map[string]interface{}) string {
 }
 
 func (r Rest) operation(req interface{}) interface{} {
-	// TODO: req.Val
-	resp, err := http.Get(req.(Request).Url)
+	// TODO: req.val
+	resp, err := http.Get(req.(Request).url)
 	if err != nil {
 		return nil
 	}
